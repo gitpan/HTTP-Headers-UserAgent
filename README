@@ -1,0 +1,36 @@
+NAME
+    HTTP::Headers::UserAgent - Routine to detect web browser
+    platform from User-Agent HTTP Header
+
+SYNOPSIS
+            use HTTP::Headers::UserAgent;
+            $Platform = new HTTP::Headers::UserAgent::GetPlatform ($ENV{HTTP_USER_AGENT});
+
+DESCRIPTION
+    The route will parse parameter string, which must be in HTTP
+    User-Agent header form, and return the browser platform. The
+    returned value is string with one of the following values:
+
+            Win95, Win98, WinNT, UNIX, MAC, Win3x, OS2, Linux
+
+    If the platform is not one of these (i.e. one of the robots),
+    the returned string is empty.
+
+NOTES
+    Part of "WWW Cyrillic Encoding Suite" Get docs and newest
+    version from http://www.neystadt.org/cyrillic/
+
+    Copyright (c) 1997-98, John Neystadt
+    <http://www.neystadt.org/john/>. You may install this script on
+    your web site for free. To obtain permision for or any other
+    usage contact john@neystadt.org.
+
+    Drop me a line if you deploy this script on your site.
+
+AUTHOR
+    Leonid Neishtadt <leonid@neystadt.org>, John Neystadt
+    <john@neystadt.org>
+
+SEE ALSO
+    perl(1).
+
