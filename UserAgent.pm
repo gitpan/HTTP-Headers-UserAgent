@@ -6,7 +6,7 @@ use HTTP::BrowserDetect;
 
 use vars qw( $VERSION @EXPORT_OK $fh %old );
 
-$VERSION = '3.00';
+$VERSION = '3.01';
 
 @EXPORT_OK = qw( GetPlatform );
 
@@ -160,7 +160,7 @@ sub os {
     linux
     dec bsd
   ) ) {
-    $os ||= $possible if $self->{'bd'}->$possible;
+    $os ||= $possible if $self->{'bd'}->$possible();
   }
   $os = 'macos' if $os =~ /^mac/;
   $os = 'osf1' if $os =~ /^dec/;
