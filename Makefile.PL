@@ -4,4 +4,7 @@ use ExtUtils::MakeMaker;
 WriteMakefile(
     'NAME'	=> 'HTTP::Headers::UserAgent',
     'VERSION_FROM' => 'UserAgent.pm', # finds $VERSION
+    'PREREQ_PM' => {
+                     'HTTP::BrowserDetect' => 0,
+                   },
 );

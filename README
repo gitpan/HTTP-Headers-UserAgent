@@ -1,21 +1,18 @@
-HTTP::Headers::UserAgent v2.00
+HTTP::Headers::UserAgent v3.00
 
-  Copyright (c) 1999 iQualify, Inc. <http://www.iqualify.com/>
-  All rights reserved.
+  Copyright (c) 2001 Ivan Kohler.  All rights reserved.
   This program is free software; you can redistribute it and/or modify it
   under the same terms as Perl itself.
-
-  Portions of this software were originally taken from the Bugzilla Bug
-  Tracking system <http://www.mozilla.org/bugs/>, and are reused here with
-  permission of the original author, Terry Weissman <terry@mozilla.org>.
 
 This is a class that deals with the HTTP User-Agent header.  It will parse
 the header, and (hopefully) report the correct platform, operating system,
 browser, and browser version.
 
-This is version 2.00 of the HTTP::Headers::UserAgent class.  While the
-interface provides backward-compatibility with version 1.00, it is not based
-on the 1.00 code.
+This is version 3.00 of the HTTP::Headers::UserAgent class.  It is now
+depriciated, and the code is a wrapper around the more well-maintained
+HTTP::BrowserDetect module.  You are advised to switch to HTTP::BrowserDetect.
+While the interface provides backward-compatibility with version 1.00, it is
+not based on the 1.00 code.
 
 To install:
   perl Makefile.PL

@@ -1,5 +1,11 @@
 Revision history for Perl extension HTTP::Headers::UserAgent.
 
-0.01  Thu Aug  5 17:14:18 1999
-	- original version; created by h2xs 1.18
+3.00  Wed Aug  8 04:20:00 2001
+	- depriciated; rewrite as wrapper around HTTP::BrowserDetect
+
+2.00  Thu Aug  5 17:14:18 1999
+	- free reimplementation by Ivan Kohler, name/API used with permission
+
+1.00  Wed Sep 30 1998
+	- original (non-free) HTTP::Headers::UserAgent by John Neystadt
 

@@ -2,40 +2,13 @@ package HTTP::Headers::UserAgent;
 
 use strict;
 use Exporter;
+use HTTP::BrowserDetect;
 
-use vars qw( $VERSION @EXPORT_OK $fh %bugzilla_platform %bugzilla_os %old );
+use vars qw( $VERSION @EXPORT_OK $fh %old );
 
-$VERSION = '2.00';
+$VERSION = '3.00';
 
 @EXPORT_OK = qw( GetPlatform );
-
-%bugzilla_platform = (
-  ia32    => 'PC',
-  ppc     => 'Macintosh',
-  alpha   => 'DEC',
-  hppa    => 'HP',
-  mips    => 'SGI',
-  sparc   => 'Sun',
-  unknown => 'Other',
-);
-
-%bugzilla_os = (
-  irix    => 'IRIX',
-  macos   => 'Mac System 8.5',
-  osf1    => 'OSF/1',
-  linux   => 'Linux',
-  solaris => 'Soalris',
-  sunos   => 'SunOS',
-  bsdi    => 'BSDI',
-  win16   => 'Windows 3.1',
-  win95   => 'Windows 95',
-  #win98   => 'Windows 98',
-  win98   => 'Windows 95',
-  winnt   => 'Windows NT',
-  win32   => 'Windows 95',
-  os2     => 'other',
-  unknown => 'other',
-);
 
 %old = (
   irix    => 'UNIX',
@@ -72,11 +45,7 @@ HTTP::Headers::UserAgent - Class encapsulating the HTTP User-Agent header
 
   $platform = $user_agent->platform;
 
-  $bugzilla_platform = $user_agent->bugzilla_platform;
-
   $os = $user_agent->os;
-
-  $bugzilla_os = $user_agent->os;
 
   ( $browser, $version ) = $user_agent->browser;
 
@@ -87,29 +56,24 @@ HTTP::Headers::UserAgent - Class encapsulating the HTTP User-Agent header
 
 The HTTP::Headers::UserAgent class represents User-Agent HTTP headers.
 
-This is version 2.00 of the HTTP::Headers::UserAgent class.  While the
-interface provides backward-compatibility with version 1.00, it is not based
-on the 1.00 code.
+This is version 3.00 of the HTTP::Headers::UserAgent class.  It is now
+B<depriciated>, and the code is a wrapper around the more well-maintained
+HTTP::BrowserDetect module.  You are advised to switch to HTTP::BrowswerDetect.
+While the interface provides backward-compatibility with version 1.00, it is
+not based on the 1.00 code.
 
 =head1 METHODS
 
 =over 4
 
-=item DumpFile FILEHANDLE
+=item DumpFile
 
-Class method - pass an open filehandle to this method, and all unparsable
-user-agent strings will be written to this filehandle.
-
-This will be triggered when you actually call the platform, os or browser
-methods.
-
-Pass the undefined value to disable this behavior.
+No-op compatibility method.
 
 =cut
 
 sub DumpFile {
-  my $self = shift;
-  $fh = shift;
+  shift;
 }
 
 =item new HTTP_USER_AGENT
@@ -122,10 +86,8 @@ string as a parameter.
 sub new {
   my $proto = shift;
   my $class = ref($proto) || $proto;
-  my $self = {};
+  my $self = { 'bd' => new HTTP::BrowserDetect(shift) };
   bless( $self, $class);
-  $self->string( shift ) if @_;
-  $self;
 }
 
 
@@ -139,8 +101,7 @@ Returns the user-agent as an unprocessed string.
 
 sub string {
   my $self = shift;
-  $self->{'string'} = shift if @_;
-  $self->{'string'};
+  $self->{'bd'}->user_agent(@_);
 }
 
 =item platform
@@ -155,11 +116,14 @@ unknown.
   mips   SGI MIPS
   sparc  Sun Sparc
 
+This is the only function which is not yet implemented as a wrapper around
+an equivalent function in HTTP::BrowserDetect.
+
 =cut
 
 sub platform {
   my $self = shift;
-  for ( $self->string ) {
+  for ( $self->{'bd'}{'user_agent'} ) {
     /Win/             && return "ia32";
     /Mac/             && return "ppc";
     /Linux.*86/       && return "ia32";
@@ -173,81 +137,37 @@ sub platform {
   "unknown";
 }
 
-=item bugzlla_platform
-
-Same as the platform method, with the following translations (for bugzilla
-compatbility):
-
-  ia32    PC
-  ppc     Macintosh
-  alpha   DEC     
-  hppa    HP
-  mips    SGI
-  sparc   Sun
-  unknown Other
-
-=cut
-
-sub bugzilla_platform {
-  my $self = shift;
-  $bugzilla_platform{ $self->platform };
-};
-
 =item os
 
 Tries to guess the operating system.  Returns irix, win16, win95, win98, 
 winnt, win32 (Windows 95/98/NT/?), macos, osf1, linux, solaris, sunos, bsdi,
 os2, or unknown.
 
+This is now a wrapper around HTTP::BrowserDetect methods.  Using
+HTTP::BrowserDetect natively offers a better interface to OS detection and is
+recommended.
+
 =cut
 
 sub os {
   my $self = shift;
-  for ( $self->string ) {
-    /Win(dows )?(95|98|NT)/            && return lc "win$2";
-    /Mozilla.*\(.*;.*; IRIX.*\)/       && return "irix";
-    /Mozilla.*\(.*;.*; (68K|PPC).*\)/  && return "macos";
-    /Moailla.*\(.*;.*; Mac.*\)/        && return "macos";
-    /Mozilla.*\(.*;.*; OSF.*\)/        && return "osf1";
-    /Mozilla.*\(.*;.*; Linux.*\)/      && return "linux";
-    /Mozilla.*\(.*;.*; SunOS 5.*\)/    && return "solaris";
-    /Mozilla.*\(.*;.*; SunOS.*\)/      && return "sunos";
-    /Mozilla.*\(.*;.*; BSD\/OS.*\)/    && return "bsdi";
-    /Mozilla.*\(.*;.*; BSD\/OS.*\)/    && return "bsdi";
-    /Mozilla.*\(Win16.*\)/             && return "win16";
-    /Mozilla.*\(.*;.*; 32bit.*\)/      && return "win32";
-    /Mozilla.*\(.*;.*; 16bit.*\)/      && return "win16";
-    /OS\/2/                            && return "os2";
+  my $os = '';
+  foreach my $possible ( qw(
+    win31 win95 win98 winnt win2k winme win32 win3x win16 windows
+    mac68k macppc mac
+    os2
+    sun4 sun5 suni86 sun irix
+    linux
+    dec bsd
+  ) ) {
+    $os ||= $possible if $self->{'bd'}->$possible;
   }
-  print $fh $self->string if $fh;
-  "unknown";
-}
-
-
-=item bugzilla_os
-
-Same as the os method, with the following translations (for bugzilla):
-
-  irix     IRIX
-  macos    Mac System 8.5
-  osf1     OSF/1
-  linux    Linux
-  solaris  Soalris
-  sunos    SunOS
-  bsdi     BSDI
-  win16    Windows 3.1
-  win95    Windows 95
-  win98    Windows 95
-  winnt    Windows NT
-  win32    Windows 95
-  os2      other
-  unknown  other
-
-=cut 
-
-sub bugzilla_os {
-  my $self = shift;
-  $bugzilla_os{ $self->os };
+  $os = 'macos' if $os =~ /^mac/;
+  $os = 'osf1' if $os =~ /^dec/;
+  $os = 'solaris' if $os =~ /^sun(5$|i86$|$)/;
+  $os = 'sunos' if $os eq 'sun4';
+  $os = 'bsdi' if $os eq 'bsd';
+  $os || 'unknown';
 }
 
 =item browser
@@ -255,34 +175,18 @@ sub bugzilla_os {
 Returns a list consisting of the browser name and version.  Possible browser
 names are:
 
-Netscape, IE, Opera, Lynx, Mozilla, Emacs-W3, or Unknown
+Netscape, IE, Opera, Lynx, WebTV, AOL Browser, or Unknown
+
+This is now a wrapper around HTTP::BrowserDetect::browser_string
 
 =cut
 
 sub browser {
   my $self = shift;
-  if ( $self->string =~ /^Mozilla\/(\S+)/ ) { #mozillas
-    my $moz_version = $1;
-    if ( $self->string =~ /compatible; (MSIE |Opera\/)([^;]+);/ ) {
-      if ( $1 eq 'MSIE ' ) {
-        'IE', $2;
-      } elsif ( $1 eq 'Opera/' ) {
-        'Opera', $2;
-      } else {
-        print $fh $self->string if $fh;
-        "Unknown", 0;
-      }
-    } elsif ( $moz_version < 5 ) {
-      'Netscape', $moz_version;
-    } else {
-      'Mozilla', $moz_version;
-    }
-  } elsif ( $self->string =~ /^(Lynx|Emacs-W3)\/(\s+)/ ) {
-    $1, $2;
-  } else {
-    print $fh $self->string if $fh;
-    "Unknown", 0;
-  }
+  my $browser = $self->{'bd'}->browser_string();
+  $browser = 'Unknown' unless defined $browser;
+  $browser = 'IE' if $browser eq 'MSIE';
+  $browser;
 }
 
 =back
@@ -316,7 +220,7 @@ sub GetPlatform {
 
 =head1 AUTHOR
 
-Ivan Kohler <ivan-useragent@sisd.com>
+Ivan Kohler <ivan-useragent@420.am>
 
 Portions of this software were originally taken from the Bugzilla Bug
 Tracking system <http://www.mozilla.org/bugs/>, and are reused here with
@@ -324,34 +228,20 @@ permission of the original author, Terry Weissman <terry@mozilla.org>.
 
 =head1 COPYRIGHT
 
-Copyright (c) 1999 iQualify, Inc. <http://www.iqualify.com/>
-All rights reserved.
+Copyright (c) 2001 Ivan Kohler.  All rights reserved.
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
 
 =head1 BUGS
 
-Needs more testing, especially with less common platforms/OSs/browsers.  Help
-save the world!  Send unparsable user-agent headers (and the
-platform/OS/browser that generated them) to <ivan-useragent@sisd.com>.  Please
-be sure you have the latest version of HTTP::Headers::UserAgent first!
-
-bugzilla_os returns "Windows 95" instead of "Windows 98", because stock
-Bugzilla doesn't have a "Windows 98" choice.  You can work around this by 
-setting $HTTP::Headers::UserAgent::bugzilla_os{win98} = "Windows 98";
-
-The bugzilla_* methods are a kludge and should probably replaced with a general
-method for doing arbitrary translation tables.
-
-The version number is 2.00 rather than the more traditional 0.01, because the
-previous HTTP::Headers::UserAgent module had version number 1.00.
+Really you should just switch over to the more well-maintained
+HTTP::BrowserDetect, which this module is now just a wrapper around.
 
 =head1 SEE ALSO
 
-perl(1), L<HTTP::Headers>
+perl(1), L<HTTP::Headers>, L<HTTP::BrowserDetect>
 
 =cut
 
 1;
-
 
