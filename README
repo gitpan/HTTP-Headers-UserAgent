@@ -1,36 +1,32 @@
-NAME
-    HTTP::Headers::UserAgent - Routine to detect web browser
-    platform from User-Agent HTTP Header
+HTTP::Headers::UserAgent v2.00
 
-SYNOPSIS
-            use HTTP::Headers::UserAgent;
-            $Platform = new HTTP::Headers::UserAgent::GetPlatform ($ENV{HTTP_USER_AGENT});
+  Copyright (c) 1999 iQualify, Inc. <http://www.iqualify.com/>
+  All rights reserved.
+  This program is free software; you can redistribute it and/or modify it
+  under the same terms as Perl itself.
 
-DESCRIPTION
-    The route will parse parameter string, which must be in HTTP
-    User-Agent header form, and return the browser platform. The
-    returned value is string with one of the following values:
+  Portions of this software were originally taken from the Bugzilla Bug
+  Tracking system <http://www.mozilla.org/bugs/>, and are reused here with
+  permission of the original author, Terry Weissman <terry@mozilla.org>.
 
-            Win95, Win98, WinNT, UNIX, MAC, Win3x, OS2, Linux
+This is a class that deals with the HTTP User-Agent header.  It will parse
+the header, and (hopefully) report the correct platform, operating system,
+browser, and browser version.
 
-    If the platform is not one of these (i.e. one of the robots),
-    the returned string is empty.
+This is version 2.00 of the HTTP::Headers::UserAgent class.  While the
+interface provides backward-compatibility with version 1.00, it is not based
+on the 1.00 code.
 
-NOTES
-    Part of "WWW Cyrillic Encoding Suite" Get docs and newest
-    version from http://www.neystadt.org/cyrillic/
+To install:
+  perl Makefile.PL
+  make
+  make test # nothing substantial yet
+  make install
 
-    Copyright (c) 1997-98, John Neystadt
-    <http://www.neystadt.org/john/>. You may install this script on
-    your web site for free. To obtain permision for or any other
-    usage contact john@neystadt.org.
+Documentation will then be available via `man HTTP::Headers::UserAgent' or
+`perldoc HTTP::Headers::UserAgent'.
 
-    Drop me a line if you deploy this script on your site.
+Homepage: <http://www.sisd.com/useragent>
 
-AUTHOR
-    Leonid Neishtadt <leonid@neystadt.org>, John Neystadt
-    <john@neystadt.org>
-
-SEE ALSO
-    perl(1).
-
+Ivan Kohler
+20 4,16 * * * saytime

@@ -1,2 +1,7 @@
-Makefile.PL
+Changes
 UserAgent.pm
+MANIFEST
+MANIFEST.SKIP
+Makefile.PL
+test.pl
+README

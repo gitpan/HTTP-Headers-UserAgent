@@ -1,0 +1,5 @@
+Revision history for Perl extension HTTP::Headers::UserAgent.
+
+0.01  Thu Aug  5 17:14:18 1999
+	- original version; created by h2xs 1.18
+
