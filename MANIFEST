@@ -1,7 +1,11 @@
 Changes
-UserAgent.pm
+LICENSE
 MANIFEST
-MANIFEST.SKIP
+META.yml
 Makefile.PL
-test.pl
 README
+dist.ini
+lib/HTTP/Headers/UserAgent.pm
+t/get-platform.t
+t/popular-browsers.t
+xt/release/cpan-changes.t

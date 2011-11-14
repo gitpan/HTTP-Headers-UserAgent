@@ -1,16 +1,22 @@
 package HTTP::Headers::UserAgent;
+{
+  $HTTP::Headers::UserAgent::VERSION = '3.02';
+}
+# ABSTRACT: identify browser by parsing User-Agent string (deprecated)
 
 use strict;
-use Exporter;
-use HTTP::BrowserDetect;
+use warnings;
 
-use vars qw( $VERSION @EXPORT_OK $fh %old );
+require Exporter;
+our @ISA    = qw(Exporter);
 
-$VERSION = '3.01';
+use HTTP::BrowserDetect 1.35;
 
-@EXPORT_OK = qw( GetPlatform );
+use vars qw($fh);
 
-%old = (
+our @EXPORT_OK = qw( GetPlatform );
+
+my %old = (
   irix    => 'UNIX',
   macos   => 'MAC',
   osf1    => 'UNIX',
@@ -21,7 +27,7 @@ $VERSION = '3.01';
   win16   => 'Win3x',
   win95   => 'Win95',
   win98   => 'Win98',
-  winnt   => 'WINNT',
+  winnt   => 'WinNT',
   win32   => undef,
   os2     => 'OS2',
   unknown => undef,
@@ -29,49 +35,40 @@ $VERSION = '3.01';
 
 =head1 NAME
 
-HTTP::Headers::UserAgent - Class encapsulating the HTTP User-Agent header
+HTTP::Headers::UserAgent - identify browser by parsing User-Agent string (deprecated)
 
 =head1 SYNOPSIS
 
   use HTTP::Headers::UserAgent;
 
-  HTTP::Headers::UserAgent->DumpFile( $fh );
-
-  $user_agent = new HTTP::Headers::UserAgent $ENV{HTTP_USER_AGENT};
-
-  $user-agent->string( $ENV{HTTP_USER_AGENT} );
-
-  $string = $user_agent->string;
+  $user_agent = HTTP::Headers::UserAgent->new( $ENV{HTTP_USER_AGENT} );
+  $browser = $user_agent->browser;
+  $version = $user_agent->version;
+  $os      = $user_agent->os;
 
   $platform = $user_agent->platform;
 
-  $os = $user_agent->os;
-
-  ( $browser, $version ) = $user_agent->browser;
-
-  #backwards-compatibility with HTTP::Headers::UserAgent 1.00
-  $old_platform = HTTP::Headers::UserAgent::GetPlatform $ENV{HTTP_USER_AGENT};
-
 =head1 DESCRIPTION
 
-The HTTP::Headers::UserAgent class represents User-Agent HTTP headers.
+This module, HTTP::BrowserDetect, is deprecated. I suggest you use one
+of the other modules which provide the same functionality. Check the
+SEE ALSO section for pointers. This module is being kept on CPAN for
+the moment, in case someone is using it, but at some point in the future
+it will probably be removed from CPAN.
 
-This is version 3.00 of the HTTP::Headers::UserAgent class.  It is now
-B<depriciated>, and the code is a wrapper around the more well-maintained
-HTTP::BrowserDetect module.  You are advised to switch to HTTP::BrowswerDetect.
-While the interface provides backward-compatibility with version 1.00, it is
-not based on the 1.00 code.
+This module is now just a wrapper around HTTP::BrowswerDetect, which is
+still actively maintained. If you're still using this module, and have
+a reason for not wanting to switch, please let me know, so I can either
+help you migrate, or ensure the module continues to support your needs.
 
 =head1 METHODS
 
 =over 4
 
-=item DumpFile
-
-No-op compatibility method.
-
 =cut
 
+# was provided in previous versions, so now it's an undocumented
+# backwards compatibility
 sub DumpFile {
   shift;
 }
@@ -172,12 +169,13 @@ sub os {
 
 =item browser
 
-Returns a list consisting of the browser name and version.  Possible browser
-names are:
-
-Netscape, IE, Opera, Lynx, WebTV, AOL Browser, or Unknown
+Returns the name of the browser, or 'Unknown'.
 
 This is now a wrapper around HTTP::BrowserDetect::browser_string
+
+In previous versions of this module, the documentation said that this
+method return a list with agent name and version. But it never did,
+it jusr returned the browser name.
 
 =cut
 
@@ -187,6 +185,23 @@ sub browser {
   $browser = 'Unknown' unless defined $browser;
   $browser = 'IE' if $browser eq 'MSIE';
   $browser;
+}
+
+=item version
+
+Returns the version of the browser, as a floating-point number.
+Note: this means that version strings which aren't valid floating
+point numbers won't be recognised.
+
+This method is just a wrapper around the C<public_version()> method
+in HTTP::BrowserDetect.
+
+=cut
+
+sub version
+{
+    my $self = shift;
+    return $self->{'bd'}->public_version();
 }
 
 =back
@@ -220,7 +235,9 @@ sub GetPlatform {
 
 =head1 AUTHOR
 
-Ivan Kohler <ivan-useragent@420.am>
+This module is now maintained by Neil Bowers <neilb@cpan.org>.
+
+The previous maintainer, who wrote this version, was Ivan Kohler.
 
 Portions of this software were originally taken from the Bugzilla Bug
 Tracking system <http://www.mozilla.org/bugs/>, and are reused here with
@@ -232,14 +249,36 @@ Copyright (c) 2001 Ivan Kohler.  All rights reserved.
 This program is free software; you can redistribute it and/or modify it
 under the same terms as Perl itself.
 
-=head1 BUGS
-
-Really you should just switch over to the more well-maintained
-HTTP::BrowserDetect, which this module is now just a wrapper around.
-
 =head1 SEE ALSO
 
-perl(1), L<HTTP::Headers>, L<HTTP::BrowserDetect>
+I have done a review of all CPAN modules for parsing the User-Agent string.
+If you have a specific need, it may be worth reading the review, to find
+the best match:
+
+http://blogs.perl.org/users/neilb/2011/10/cpan-modules-for-parsing-user-agent-strings.html
+
+In brief though, I would recommend you start off with one of the following
+modules:
+
+=over
+
+=item Parse::HTTP::UserAgent
+
+Has best overall coverage of different browsers and other user agents.
+
+=item HTTP::DetectUserAgent
+
+Not as good coverage, but handles modern browsers well, and is the
+fastest module, so if you're processing large logfiles, this might
+be the best choice.
+
+=item HTTP::BrowserDetect
+
+Poorest coverage of the three modules listed here, and doesn't do well at
+recognising version numbers. It's the best module for detecting whether
+a given agent is a robot/crawler though.
+
+=back
 
 =cut
 

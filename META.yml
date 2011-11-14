@@ -1,0 +1,22 @@
+---
+abstract: 'identify browser by parsing User-Agent string (deprecated)'
+author:
+  - 'Neil Bowers <neilb@cpan.org>'
+build_requires:
+  Test::More: 0.88
+configure_requires:
+  ExtUtils::MakeMaker: 6.30
+dynamic_config: 0
+generated_by: 'Dist::Zilla version 4.300003, CPAN::Meta::Converter version 2.110440'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: HTTP-Headers-UserAgent
+requires:
+  Exporter: 0
+  HTTP::BrowserDetect: 1.35
+  strict: 0
+  vars: 0
+  warnings: 0
+version: 3.02

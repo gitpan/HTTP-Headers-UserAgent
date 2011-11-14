@@ -1,29 +1,31 @@
-HTTP::Headers::UserAgent v3.01
+HTTP::Headers::UserAgent v3.02
 
-  Copyright (c) 2002 Ivan Kohler.  All rights reserved.
-  This program is free software; you can redistribute it and/or modify it
-  under the same terms as Perl itself.
+This module is now deprecated. There are other modules which do the same
+thing better, and which are actively maintained.
 
-This is a class that deals with the HTTP User-Agent header.  It will parse
-the header, and (hopefully) report the correct platform, operating system,
-browser, and browser version.
+This module is now little more than a wrapper around HTTP::BrowserDetect.
+It is provided in case someone out there is using this interface,
+but I recommend that you port your code to Parse::HTTP::UserAgent
+or HTTP::DetectUserAgent.
 
-This is version 3.01 of the HTTP::Headers::UserAgent class.  It is now
-depriciated, and the code is a wrapper around the more well-maintained
-HTTP::BrowserDetect module.  You are advised to switch to HTTP::BrowserDetect.
-While the interface provides backward-compatibility with version 1.00, it is
-not based on the 1.00 code.
-
-To install:
+A review of Perl modules for parsing User-Agent strings can be found at:
+    http://blogs.perl.org/users/neilb/2011/10/cpan-modules-for-parsing-user-agent-strings.html
+ 
+To install this module you should just have to:
   perl Makefile.PL
   make
-  make test # nothing substantial yet
+  make test
   make install
 
-Documentation will then be available via `man HTTP::Headers::UserAgent' or
-`perldoc HTTP::Headers::UserAgent'.
+I have taken over maintenance of this module, because these was confusion
+over which of the previous releases was the official one. I do not plan
+to do further updates, unless there are specific bugs needed,
+or clarifications in the documentation.
 
-Homepage: <http://www.sisd.com/useragent>
+Copyright (c) 2002 Ivan Kohler.
+Copyright (c) 2011 Neil Bowers.
 
-Ivan Kohler
-20 4,16 * * * saytime
+All rights reserved.
+This program is free software; you can redistribute it and/or modify it
+under the same terms as Perl itself.
+
