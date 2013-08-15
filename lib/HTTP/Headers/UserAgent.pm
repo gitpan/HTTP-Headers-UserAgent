@@ -1,6 +1,6 @@
 package HTTP::Headers::UserAgent;
 {
-  $HTTP::Headers::UserAgent::VERSION = '3.02';
+  $HTTP::Headers::UserAgent::VERSION = '3.03';
 }
 # ABSTRACT: identify browser by parsing User-Agent string (deprecated)
 
@@ -50,7 +50,7 @@ HTTP::Headers::UserAgent - identify browser by parsing User-Agent string (deprec
 
 =head1 DESCRIPTION
 
-This module, HTTP::BrowserDetect, is deprecated. I suggest you use one
+This module, HTTP::Headers::UserAgent, is deprecated. I suggest you use one
 of the other modules which provide the same functionality. Check the
 SEE ALSO section for pointers. This module is being kept on CPAN for
 the moment, in case someone is using it, but at some point in the future
