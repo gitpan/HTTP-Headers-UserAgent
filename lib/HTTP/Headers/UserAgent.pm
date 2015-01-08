@@ -1,9 +1,6 @@
 package HTTP::Headers::UserAgent;
-{
-  $HTTP::Headers::UserAgent::VERSION = '3.05';
-}
 # ABSTRACT: identify browser by parsing User-Agent string (deprecated)
-
+$HTTP::Headers::UserAgent::VERSION = '3.06';
 use 5.006;
 use strict;
 use warnings;
